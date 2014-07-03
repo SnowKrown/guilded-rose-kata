@@ -3,121 +3,119 @@ using UnityEngine;
 
 namespace GildedRose.Console
 {
-	class Program
+	public class Program
 	{
-		IList<Item> Items;
+		public IList<DetailedItem> Items;
+
 		static void Main(string[] args)
 		{
-			Debug.Log("OMGHAI!");
-			
 			var app = new Program()
 			{
-				Items = new List<Item>
+				Items = new List<DetailedItem>
 				{
-					new Item {Name = "+5 Dexterity Vest", SellIn = 10, Quality = 20},
-					new Item {Name = "Aged Brie", SellIn = 2, Quality = 0},
-					new Item {Name = "Elixir of the Mongoose", SellIn = 5, Quality = 7},
-					new Item {Name = "Sulfuras, Hand of Ragnaros", SellIn = 0, Quality = 80},
-					new Item
+					new DetailedItem {Name = "+5 Dexterity Vest", SellIn = 10, Quality = 20, Type = ItemType.Normal},
+					new DetailedItem {Name = "Aged Brie", SellIn = 2, Quality = 0, Type = ItemType.InvestmentCollectable},
+					new DetailedItem {Name = "Elixir of the Mongoose", SellIn = 5, Quality = 7, Type = ItemType.Normal},
+					new DetailedItem {Name = "Sulfuras, Hand of Ragnaros", SellIn = 0, Quality = 80, Type = ItemType.Inmutable},
+					new DetailedItem
 					{
 						Name = "Backstage passes to a TAFKAL80ETC concert",
 						SellIn = 15,
-						Quality = 20
+						Quality = 20,
+						Type = ItemType.Ticket
 					},
-					new Item {Name = "Conjured Mana Cake", SellIn = 3, Quality = 6}
+					new DetailedItem {Name = "Conjured Mana Cake", SellIn = 3, Quality = 6, Type = ItemType.Conjured}
 				}
-				
 			};
 			
 			app.UpdateQuality();
-			
 		}
 		
 		public void UpdateQuality()
 		{
 			for (var i = 0; i < Items.Count; i++)
 			{
-				if (Items[i].Name != "Aged Brie" && Items[i].Name != "Backstage passes to a TAFKAL80ETC concert")
-				{
-					if (Items[i].Quality > 0)
-					{
-						if (Items[i].Name != "Sulfuras, Hand of Ragnaros")
-						{
-							Items[i].Quality = Items[i].Quality - 1;
-						}
-					}
-				}
-				else
-				{
-					if (Items[i].Quality < 50)
-					{
-						Items[i].Quality = Items[i].Quality + 1;
-						
-						if (Items[i].Name == "Backstage passes to a TAFKAL80ETC concert")
-						{
-							if (Items[i].SellIn < 11)
-							{
-								if (Items[i].Quality < 50)
-								{
-									Items[i].Quality = Items[i].Quality + 1;
-								}
-							}
-							
-							if (Items[i].SellIn < 6)
-							{
-								if (Items[i].Quality < 50)
-								{
-									Items[i].Quality = Items[i].Quality + 1;
-								}
-							}
-						}
-					}
-				}
-				
-				if (Items[i].Name != "Sulfuras, Hand of Ragnaros")
-				{
-					Items[i].SellIn = Items[i].SellIn - 1;
-				}
-				
+				UpdateQualityBeforeDecreaseSellIn(i);
+				DecreaseSellIn (i);
+
 				if (Items[i].SellIn < 0)
 				{
-					if (Items[i].Name != "Aged Brie")
+					if (Items[i].Type != ItemType.InvestmentCollectable)
 					{
-						if (Items[i].Name != "Backstage passes to a TAFKAL80ETC concert")
-						{
-							if (Items[i].Quality > 0)
-							{
-								if (Items[i].Name != "Sulfuras, Hand of Ragnaros")
-								{
-									Items[i].Quality = Items[i].Quality - 1;
-								}
-							}
-						}
+						if (Items[i].Type != ItemType.Ticket)
+							DecreaseQuality(i);
 						else
-						{
-							Items[i].Quality = Items[i].Quality - Items[i].Quality;
-						}
+							Items[i].Quality = 0;
 					}
 					else
 					{
-						if (Items[i].Quality < 50)
-						{
-							Items[i].Quality = Items[i].Quality + 1;
-						}
+						IncreaseQuality (i);
 					}
 				}
 			}
 		}
-		
+
+		private void UpdateQualityBeforeDecreaseSellIn (int index)
+		{
+			if(Items[index].Type == ItemType.Ticket)
+				IncreaseTicketQuality (index);
+			else if(Items[index].Type == ItemType.InvestmentCollectable)
+				IncreaseQuality (index);
+			else
+				DecreaseQuality (index);
+		}
+
+		private void DecreaseSellIn (int index)
+		{
+			if (Items[index].Type != ItemType.Inmutable)
+				Items[index].SellIn--;
+		}
+
+		private void IncreaseTicketQuality (int i)
+		{
+			IncreaseQuality (i);
+
+			if (Items[i].SellIn < 11 )
+				IncreaseQuality (i);
+				
+			if (Items[i].SellIn < 6)
+				IncreaseQuality (i);
+		}
+
+		private void DecreaseQuality (int index)
+		{
+			if (Items[index].Quality > 0)
+			{
+				if (Items[index].Type != ItemType.Inmutable)
+					Items[index].Quality--;
+			}
+		}
+
+		private void IncreaseQuality (int index)
+		{
+			if (Items[index].Quality < 50)
+				Items[index].Quality++;
+		}
+	}
+
+	public enum ItemType
+	{
+		Normal = 0,
+		InvestmentCollectable = 1,
+		Inmutable = 2,
+		Ticket = 3,
+		Conjured = 4,
 	}
 	
 	public class Item
 	{
 		public string Name { get; set; }
-		
 		public int SellIn { get; set; }
-		
 		public int Quality { get; set; }
 	}
 	
+	public class DetailedItem : Item
+	{
+		public ItemType Type { get; set;}
+	}
 }
