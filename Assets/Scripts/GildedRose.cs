@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Program
 {
-	public IList<ItemSubBase> Items;
+	private IList<ItemSubBase> Items;
 
 	static void Main(string[] args)
 	{
