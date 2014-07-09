@@ -16,7 +16,7 @@ public class Program
 				new NormalItem ("Elixir of the Mongoose", 5, 7),
 				new InmutableItem ("Sulfuras, Hand of Ragnaros"),
 				new TicketItem ("Backstage passes to a TAFKAL80ETC concert", 15, 20),
-//				new ItemSubBase ("Conjured Mana Cake", 3, 6);
+				new ConjuredItem ("Conjured Mana Cake", 3, 6),
 			}
 		};
 		

@@ -1,21 +1,13 @@
 ﻿
-public class ConjuredItem : ItemSubBase 
+public class ConjuredItem : NormalItem 
 {
-	public ConjuredItem (string name, int sellIn, int quality)
+	public ConjuredItem (string name, int sellIn, int quality) : base (name, sellIn, quality)
 	{
-		this.Name = name;
-		this.SellIn = sellIn;
-		this.Quality = quality;
 	}
 	
 	protected override void UpdateQuality ()
 	{
 		DecreaseQuality ();
 		DecreaseQuality ();
-	}
-	
-	protected override void UpdateSellIn ()
-	{
-		DecreaseSellIn ();
 	}
 }
